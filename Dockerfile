@@ -25,5 +25,14 @@ RUN rm -rf /usr/local/nginx/html /usr/local/nginx/conf/*.default
 FROM base_image
 RUN apk add --no-cache ca-certificates openssl pcre zlib ffmpeg
 COPY --from=build /usr/local/nginx /usr/local/nginx
+
+RUN apk --no-cache add shadow \
+    && usermod -u 1001 nginx\
+    && chown -R 1001:0 /usr/local/nginx \
+    && chmod -R g+w /usr/local/nginx \
+    && apk del shadow
+
+USER 1001
+
 ENTRYPOINT ["/usr/local/nginx/sbin/nginx"]
 CMD ["-g", "daemon off;"]
