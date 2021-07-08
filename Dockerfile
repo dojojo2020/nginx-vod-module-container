@@ -2,9 +2,9 @@ FROM alpine:3.12.0 AS base_image
 
 FROM base_image AS build
 
-RUN apk add --no-cache curl build-base openssl openssl-dev zlib-dev linux-headers pcre-dev ffmpeg ffmpeg-dev
-RUN addgroup -S nginx \
-    && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx 
+RUN apk add --no-cache curl build-base openssl openssl-dev zlib-dev linux-headers pcre-dev ffmpeg ffmpeg-dev \
+    && addgroup -S nginx \
+    && adduser -D -S -h /usr/local/nginx -s /sbin/nologin -G nginx nginx 
 RUN mkdir nginx nginx-vod-module
 
 ARG NGINX_VERSION=1.16.1
