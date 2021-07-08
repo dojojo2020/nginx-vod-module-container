@@ -2,9 +2,9 @@ FROM alpine:3.12.0 AS base_image
 
 FROM base_image AS build
 
-RUN apk add --no-cache curl build-base openssl openssl-dev zlib-dev linux-headers pcre-dev ffmpeg ffmpeg-dev \
-    && addgroup -S nginx \
-    && adduser -D -S -h /usr/local/nginx -s /sbin/nologin -G nginx nginx 
+RUN addgroup -S nginx \
+    && adduser -D -S -h /usr/local/nginx -s /sbin/nologin -G nginx nginx \
+    && apk add --no-cache curl build-base openssl openssl-dev zlib-dev linux-headers pcre-dev ffmpeg ffmpeg-dev
 RUN mkdir nginx nginx-vod-module
 
 ARG NGINX_VERSION=1.16.1
@@ -19,22 +19,22 @@ RUN ./configure --prefix=/usr/local/nginx \
 	--with-http_ssl_module \
 	--with-file-aio \
 	--with-threads \
-	--with-cc-opt="-O3"
+	--with-cc-opt='-O3'
 RUN make
 RUN make install
 RUN rm -rf /usr/local/nginx/html /usr/local/nginx/conf/*.default
-
-FROM base_image
-RUN apk add --no-cache ca-certificates openssl pcre zlib ffmpeg
-COPY --from=build /usr/local/nginx /usr/local/nginx
-
 RUN apk --no-cache add shadow \
     && usermod -u 1001 nginx\
     && chown -R 1001:0 /usr/local/nginx \
     && chmod -R g+w /usr/local/nginx \
     && apk del shadow
-
 USER 1001
+
+
+FROM base_image
+RUN apk add --no-cache ca-certificates openssl pcre zlib ffmpeg
+COPY --from=build /usr/local/nginx /usr/local/nginx
+
 
 ENTRYPOINT ["/usr/local/nginx/sbin/nginx"]
 CMD ["-g", "daemon off;"]
