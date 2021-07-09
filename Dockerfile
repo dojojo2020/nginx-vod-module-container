@@ -17,7 +17,6 @@ ARG VOD_MODULE_VERSION=399e1a0ecb5b0007df3a627fa8b03628fc922d5e
 
 RUN curl -sL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz | tar -C /nginx --strip 1 -xz
 RUN curl -sL https://github.com/kaltura/nginx-vod-module/archive/${VOD_MODULE_VERSION}.tar.gz | tar -C /nginx-vod-module --strip 1 -xz
-
 WORKDIR /nginx
 RUN ./configure --prefix=/var/cache/nginx \
 	--add-module=../nginx-vod-module \
@@ -25,16 +24,17 @@ RUN ./configure --prefix=/var/cache/nginx \
 	--with-file-aio \
 	--with-threads \
 	--with-cc-opt='-O3'
-RUN make
-RUN make install
+
+RUN make \
+    && make install
 RUN rm -rf /var/cache/nginx/html /var/cache/nginx/conf/*.default
 
 
 # implement changes required to run NGINX as an unprivileged user
 RUN ##sed -i 's,listen       80;,listen       8080;,' /var/cache/nginx/conf.d/default.conf \
-    sed -i '/user  nginx;/d' /var/cache/nginx/nginx.conf \
-    && sed -i 's,/var/run/nginx.pid,/tmp/nginx.pid,' /var/cache/nginx/nginx.conf \
-    && sed -i "/^http {/a \    proxy_temp_path /tmp/proxy_temp;\n    client_body_temp_path /tmp/client_temp;\n    fastcgi_temp_path /tmp/fastcgi_temp;\n    uwsgi_temp_path /tmp/uwsgi_temp;\n    scgi_temp_path /tmp/scgi_temp;\n" /var/cache/nginx/nginx.conf \
+    sed -i '/user  nginx;/d' /var/cache/nginx/conf/nginx.conf \
+    && sed -i 's,/var/run/nginx.pid,/tmp/nginx.pid,' /var/cache/nginx/conf/nginx.conf \
+    && sed -i "/^http {/a \    proxy_temp_path /tmp/proxy_temp;\n    client_body_temp_path /tmp/client_temp;\n    fastcgi_temp_path /tmp/fastcgi_temp;\n    uwsgi_temp_path /tmp/uwsgi_temp;\n    scgi_temp_path /tmp/scgi_temp;\n" /var/cache/nginx/conf/nginx.conf \
 # nginx user must own the cache and etc directory to write cache and tweak the nginx config
 RUN chown -R $UID:0 /var/cache/nginx \
     && chmod -R g+w /var/cache/nginx 
