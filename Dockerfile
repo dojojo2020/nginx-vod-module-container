@@ -40,6 +40,8 @@ RUN set -x \
 	&& apk add --no-cache ca-certificates openssl pcre zlib ffmpeg
 
 COPY --from=build /var/cache/nginx /var/cache/nginx
+COPY examples/videos/* /opt/static/videos 
+COPY examples/nginx.conf /var/cache/nginx/conf/nginx.conf
 
 # implement changes required to run NGINX as an unprivileged user
 RUN sed -i 's,listen       80;,listen       8080;,' /var/cache/nginx/conf/nginx.conf 
