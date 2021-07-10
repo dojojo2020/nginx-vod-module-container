@@ -40,8 +40,13 @@ RUN set -x \
 	&& apk add --no-cache ca-certificates openssl pcre zlib ffmpeg
 
 COPY --from=build /var/cache/nginx /var/cache/nginx
-COPY examples/videos/* /opt/static/videos 
-COPY examples/nginx.conf /var/cache/nginx/conf/nginx.conf
+COPY examples/nginx.conf /var/cache/nginx/conf/
+COPY examples/videos/devito360p.mp4 /opt/static/videos 
+COPY examples/videos/devito480p.mp4 /opt/static/videos 
+COPY examples/videos/devito720p.mp4 /opt/static/videos 
+COPY examples/videos/devito.en_US.vtt /opt/static/videos 
+
+RUN ls -laR /opt/static/videos/*
 
 # implement changes required to run NGINX as an unprivileged user
 RUN sed -i 's,listen       80;,listen       8080;,' /var/cache/nginx/conf/nginx.conf 
