@@ -41,12 +41,14 @@ RUN set -x \
 
 COPY --from=build /var/cache/nginx /var/cache/nginx
 
-# nginx user must own the cache and etc directory to write cache and tweak the nginx config
+# implement changes required to run NGINX as an unprivileged user
+RUN sed -i 's,listen       80;,listen       8080;,' /var/cache/nginx/conf/nginx.conf 
 RUN chown -R $UID:0 /var/cache/nginx \
     && chmod -R g+w /var/cache/nginx 
 
 USER $UID
 
+EXPOSE 8080
 
 ENTRYPOINT ["/var/cache/nginx/sbin/nginx"]
 CMD ["-g", "daemon off;"]
