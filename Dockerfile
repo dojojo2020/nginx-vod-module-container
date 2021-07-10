@@ -40,6 +40,8 @@ RUN set -x \
 	&& apk add --no-cache ca-certificates openssl pcre zlib ffmpeg
 
 COPY --from=build /var/cache/nginx /var/cache/nginx
+
+RUN mkdir -p /opt/static/videos/
 COPY examples/nginx.conf /var/cache/nginx/conf/
 COPY examples/videos/devito360p.mp4 /opt/static/videos 
 COPY examples/videos/devito480p.mp4 /opt/static/videos 
