@@ -53,7 +53,9 @@ RUN ls -laR /opt/static/videos/*
 # implement changes required to run NGINX as an unprivileged user
 RUN sed -i 's,listen       80;,listen       8080;,' /var/cache/nginx/conf/nginx.conf 
 RUN chown -R $UID:0 /var/cache/nginx \
-    && chmod -R g+w /var/cache/nginx 
+    && chmod -R g+w /var/cache/nginx \
+    && chown -R $UID:0 /opt/static/videos \
+    && chmod -R g+w /opt/static/videos
 
 USER $UID
 
