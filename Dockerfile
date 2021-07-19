@@ -38,8 +38,8 @@ RUN set -x \
 	&& addgroup -g $GID -S nginx \
     && adduser -S -D -H -u $UID -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx \
 	&& apk add --no-cache ca-certificates openssl pcre zlib ffmpeg
-RUN echo "UID= $UID, GID= $GID"
-USER $UID
+RUN echo 'UID=' $UID
+
 
 COPY --from=build /var/cache/nginx /var/cache/nginx
 
@@ -59,6 +59,7 @@ RUN chown -R $UID:0 /var/cache/nginx \
     && chown -R $UID:0 /opt/static/videos \
     && chmod -R g+w /opt/static/videos
 
+USER 101
 
 EXPOSE 8080
 
