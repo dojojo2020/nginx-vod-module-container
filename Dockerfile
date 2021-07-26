@@ -37,13 +37,12 @@ ARG GID=1001
 
 RUN set -x \
     && addgroup -g $GID -S nginx \
-    && adduser -S -D -H -u $UID -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx \
-    && apk add --no-cache ca-certificates openssl pcre zlib ffmpeg
-
+    && adduser -S -D -H -u $UID -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx 
+    
 USER root
 
+RUN  apk add --no-cache ca-certificates openssl pcre zlib ffmpeg
 COPY --from=build /var/cache/nginx /var/cache/nginx
-
 RUN mkdir -p /opt/static/videos/
 COPY examples/nginx.conf /var/cache/nginx/conf/
 #COPY examples/videos/devito360p.mp4 /opt/static/videos 
@@ -60,6 +59,8 @@ RUN chown -R $UID:0 /var/cache/nginx \
     && chmod -R g+w /opt/static/videos
 
 USER nginx
+
+RUN whoami
 
 EXPOSE 8080
 
