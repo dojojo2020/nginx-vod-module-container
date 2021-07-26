@@ -2,8 +2,9 @@ FROM alpine:3.12.0 AS base_image
 
 FROM base_image AS build
 
-ARG UID=101
-ARG GID=101
+ARG UID=1001
+ARG GID=1001
+RUN echo 'UID=' $UID
 
 RUN set -x \
 # create nginx user/group first, to be consistent throughout docker variants
@@ -31,8 +32,8 @@ RUN rm -rf /var/cache/nginx/html /var/cache/nginx/conf/*.default
 
 
 FROM base_image
-ARG UID=101
-ARG GID=101
+ARG UID=1001
+ARG GID=1001
 
 RUN set -x \
 	&& addgroup -g $GID -S nginx \
