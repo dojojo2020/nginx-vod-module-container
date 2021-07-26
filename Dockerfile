@@ -60,7 +60,7 @@ RUN chown -R $UID:0 /var/cache/nginx \
     && chown -R $UID:0 /opt/static/videos \
     && chmod -R g+w /opt/static/videos
 
-USER 101
+USER $UID
 
 EXPOSE 8080
 
