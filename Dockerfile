@@ -1,4 +1,5 @@
-FROM alpine:3.12.0 AS base_image
+FROM alpine:3.12.0 AS base_image 
+# A non-root user container image for Nginx VOD module 
 
 FROM base_image AS build
 
@@ -7,7 +8,7 @@ ARG GID=1001
 RUN echo 'UID=' $UID
 
 RUN set -x \
-# create nginx user/group first, to be consistent throughout docker variants
+# create nginx user/group first, to be consistent throughout container runtime variants
     && addgroup -g $GID -S nginx \
     && adduser -S -D -H -u $UID -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx \
     && apk add --no-cache curl build-base openssl openssl-dev zlib-dev linux-headers pcre-dev ffmpeg ffmpeg-dev
@@ -45,11 +46,6 @@ RUN  apk add --no-cache ca-certificates openssl pcre zlib ffmpeg
 COPY --from=build /var/cache/nginx /var/cache/nginx
 RUN mkdir -p /opt/static/videos/
 COPY examples/nginx.conf /var/cache/nginx/conf/
-#COPY examples/videos/devito360p.mp4 /opt/static/videos 
-#COPY examples/videos/devito480p.mp4 /opt/static/videos 
-#COPY examples/videos/devito720p.mp4 /opt/static/videos 
-#COPY examples/videos/devito.en_US.vtt /opt/static/videos 
-#RUN ls -laR /opt/static/videos/*
 
 # implement changes required to run NGINX as an unprivileged user
 RUN sed -i 's,listen       80;,listen       8080;,' /var/cache/nginx/conf/nginx.conf 
