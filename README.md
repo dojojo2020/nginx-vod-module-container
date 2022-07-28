@@ -7,8 +7,7 @@ vod-module](https://github.com/kaltura/nginx-vod-module).
 Building locally
 ----------------
 
-This repository uses Docker's multi-stage builds, therefore building this image
-requires Docker 17.05 or higher, Podman 3.3 or above. Given that you have all the required
+Building this image requires Docker 17.05 or higher, Podman 3.3 or above. Given that you have all the required
 dependencies, building the image is as simple as running a ``docker build``:
 
 ```
